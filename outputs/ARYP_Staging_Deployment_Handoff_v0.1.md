@@ -29,7 +29,7 @@
 - Autonomous assumption register: `outputs/ARYP_Autonomous_Assumption_Register_v0.1.md` records reversible defaults for all 226 requirements. High-risk items remain labelled `ASSUMED—NOT APPROVED` and cannot authorize production use.
 - Release gates: `/api/release-gates` exposes G1–G12 with required evidence/sign-offs. Every gate currently starts as `PENDING`; a production transition cannot be inferred from demo activity.
 - Governance console: after login, use `Polisi & gates` in the top bar or open `/governance.html` to review active policies, regulatory/NFR registries and G1–G12 status. Document and heir rows include simulated review buttons; API role/evidence checks still apply.
-- Organization scope: the normalized assumption hierarchy is `ARYP franchisor → three franchisees → six branches → user memberships/roles`. Franchisor Supervisor and Auditor see the network; organization assignments inherit their franchisee branches; branch assignments see only their assigned branch. The Governance Console now displays the visible organization tree and scope.
+- Organization scope: the normalized assumption hierarchy is `ARYP franchisor → nine franchisees → 27 branches → user memberships/roles`. Franchisor Supervisor and Auditor see the network; franchisee assignments inherit their three branches; branch assignments see only their assigned branch. The Governance Console now displays the visible organization tree and scope.
 - Client user manual: `outputs/ARYP_Manual_Pengguna_Staging_v0.1.docx`, `outputs/ARYP_Manual_Pengguna_Staging_v0.1.pdf` and the shareable bundle `outputs/ARYP_Manual_Pengguna_Staging_v0.1.zip` document the complete role-by-role test flows with staging screenshots, expected results, reset procedure, troubleshooting and synthetic-data boundaries.
 - Registration redirect fix: the staging login shell now sends an explicit `email_redirect_to` equal to the current Worker origin during signup. New confirmation links return to staging; older links already issued with `localhost` must be replaced by requesting a fresh confirmation email.
 - Gate review controls: executive, franchisor supervisor and auditor can select `IN_REVIEW`, `PASSED`, `BLOCKED` or `WAIVED`, then record a note and evidence snapshot. `PASSED`/`WAIVED` are rejected without both fields. This is an auditable simulation workflow only; the API always reports `production_release_allowed=false` until real client gates are approved.
@@ -58,9 +58,19 @@ values ('AUTH_USER_UUID', 'BRANCH_MANAGER', array['BR-001']::text[]);
 
 5. Log masuk semula dan uji flow synthetic: pelanggan, gadaian baharu, kelulusan, tunai simulasi, vault, lelongan, laporan dan audit.
 
+## Demo skop penuh (kemas kini 2026-08-19)
+
+- Dataset kini merangkumi 9 franchisee (`FR-001` hingga `FR-009`) dan 27 cawangan aktif (`BR-001` hingga `BR-027`), dengan data sintetik 12 bulan.
+- Login page menyediakan pemilih skop: `BRANCH_MANAGER`, `TELLER`, `VAULT_CUSTODIAN` untuk setiap 27 cawangan, serta `FRANCHISEE_ADMIN` untuk setiap 9 franchisee.
+- Akaun demo berjumlah 96: 81 akaun cawangan (27 × 3), 9 akaun franchisee, dan 6 akaun rangkaian/eksekutif/auditor sedia ada.
+- Semua akaun baharu menggunakan e-mel sintetik `@aryp-demo.my` dan kata laluan bersama `ARYP-Demo-2026!`. Jangan gunakan akaun ini untuk data sebenar.
+- Skop disahkan di server: contoh Manager `BR-027` melihat satu cawangan; Franchisee Admin `FR-009` melihat `BR-025`–`BR-027`; rekod cross-tenant ditolak dengan HTTP 403.
+- Migration sumber akaun: `supabase/migrations/20260819000020_aryp_branch_demo_logins.sql`.
+- Deployment semasa yang disahkan: staging Worker version 70 dan production-named Worker version 63, kedua-duanya melayani login, mockup, governance dan SAG dengan HTTP 200.
+
 ## Akaun demo synthetic
 
-Login page menyediakan butang pantas untuk semua role berikut. Semua akaun menggunakan kata laluan `ARYP-Demo-2026!` dan hanya untuk testing synthetic:
+Login page menyediakan butang pantas untuk role rangkaian berikut, serta pemilih skop penuh di bawahnya. Semua akaun menggunakan kata laluan `ARYP-Demo-2026!` dan hanya untuk testing synthetic:
 
 | Role | E-mel |
 |---|---|
@@ -70,6 +80,15 @@ Login page menyediakan butang pantas untuk semua role berikut. Semua akaun mengg
 | FRANCHISOR_SUPERVISOR | `demo.franchisor@aryp-demo.my` |
 | EXECUTIVE | `demo.executive@aryp-demo.my` |
 | AUDITOR | `demo.auditor@aryp-demo.my` |
+
+Format akaun skop penuh:
+
+| Skop | Format e-mel |
+|---|---|
+| Pengurus cawangan | `demo.manager.brNNN@aryp-demo.my` |
+| Teller | `demo.teller.brNNN@aryp-demo.my` |
+| Vault custodian | `demo.vault.brNNN@aryp-demo.my` |
+| Admin franchisee | `demo.franchisee.frNNN@aryp-demo.my` |
 
 Untuk menukar role, log keluar dan pilih butang role yang lain. Akaun ini tidak boleh digunakan untuk production atau data sebenar.
 
@@ -87,6 +106,8 @@ Untuk menukar role, log keluar dan pilih butang role yang lain. Akaun ini tidak 
 - Latest expanded-data smoke (2026-08-19): staging now contains 6 franchisees and 18 active branches (3 per franchisee), with 188 synthetic customers, 157 synthetic pledges, 216 branch-month records and 12 monthly periods (`2025-09`–`2026-08`). Master UI shows all 18 branches and 7 organizations; the authenticated API returns role-scoped counts of Branch Manager `13/12/1`, Executive `34/30/3`, and Master Franchisor `188/157/18`. Monthly finance, vault and auction fixtures are included. The Edge Function is version 23; all values remain simulation-only.
 - Latest franchisee expansion smoke (2026-08-19): added FR-007–FR-009 and BR-019–BR-027. Staging now contains 9 franchisees, 27 active branches, 278 synthetic customers, 232 synthetic pledges and 324 branch-month records covering `2025-09`–`2026-08`. Master UI displays 10 organizations (9 franchisees + ARYP franchisor) and 27 branches; the report panel shows 27 branches reporting for every month. Organization and branch role boundaries remain enforced server-side.
 - Latest role-scope parity smoke (2026-08-19): the previous “same view” concern was traced to static UI labels and shared demo fixtures, not a network data leak. API v25 and the deployed mockup now hydrate scope, counts, cash, notifications and cases from the authenticated session. Master Franchisor: NETWORK, 10 organizations, 27 branches, 278 customers, 232 pledges. Executive/franchisee: ASSIGNED_SCOPE, FR-001, 3 branches, 34 customers, 30 pledges. Branch Manager: BR-001, 1 branch, 13 customers, 12 pledges. Teller: BR-001, same underlying branch counts by design, but teller-only navigation and action permissions. Browser smoke confirmed role-specific headings and menus; server smoke confirmed 12 monthly periods (`2025-09`–`2026-08`) and branch IDs never escape each role’s scope. `/cases` direct endpoint was fixed and redeployed as Edge Function v25. Both `https://aryp-staging.rsshost.workers.dev` and `https://aryp-production.rsshost.workers.dev` return HTTP 200 health with `SYNTHETIC_ONLY`.
+- Latest branch-account smoke (2026-08-19): the scope selector and migration now cover all 27 branches and all 9 franchisees. Production API login was verified for `BR-027` Manager (1 branch, 10 customers, 8 pledges) and `FR-009` Franchisee Admin (3 branches, 30 customers, 24 pledges). Cross-tenant action checks continue to return HTTP 403.
+- Latest customer-identity smoke (2026-08-19): removed the hard-coded `Siti Nur Aina` profile from the shared mockup/SAG template. `/api/session` now returns a masked synthetic customer profile selected from the authenticated branch scope, with branch-specific synthetic aliases; BR-002 resolves to Hafizah binti Ismail / `CUS-004` and BR-027 resolves to Nur Syazana binti Azmi / `CUS-197`. The dashboard, customer panel, pawn flow and SAG preview use that scoped profile/branch instead of presenting one person in every cawangan.
 
 ## Baki sebelum production
 

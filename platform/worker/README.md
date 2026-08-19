@@ -36,6 +36,8 @@ The organization model is normalized as `Franchisor → Franchisee → Branch �
 
 The role-scoped fixture migrations add synthetic customers, pledges and marhun records across all twenty-seven branches, plus twelve monthly periods from September 2025 through August 2026. Current smoke counts are Branch Manager `13/12` in 1 branch, Executive `34/30` across FR-001's 3 branches, and Master Francaisor/Auditor `278/232` across all 27 branches (customers/pledges). Counts and monthly history are calculated server-side from the authenticated membership, not from the browser's role selector.
 
+Customer identity in the dashboard, customer panel, pledge wizard and SAG preview is also scope-aware. The API resolves a masked synthetic customer from the authenticated branch before the UI renders it, so one named customer is not reused across every cawangan.
+
 New account registration sends `email_redirect_to` explicitly to the current Worker origin, so confirmation links from the staging page return to `https://aryp-staging.rsshost.workers.dev/` instead of a local development URL. If an older confirmation email still contains `localhost`, request a fresh confirmation email after refreshing the staging page.
 
 Example membership insert (run only by an authorised project operator through Supabase SQL):

@@ -10,6 +10,21 @@ const authKey = Deno.env.get("SUPABASE_ANON_KEY") || serviceKey;
 const headers = { "content-type": "application/json; charset=utf-8", "cache-control": "no-store", "x-content-type-options": "nosniff", "referrer-policy": "no-referrer" };
 const response = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status, headers });
 
+// Synthetic display aliases keep the demo believable without introducing
+// real customer PII. The alias is intentionally branch-specific, while the
+// underlying fixture ID remains the source of truth and stays masked.
+const CUSTOMER_ALIAS_BY_BRANCH: Record<string, string> = {
+  "BR-001": "Nur Aisyah binti Rahman", "BR-002": "Hafizah binti Ismail", "BR-003": "Mohd Faizal bin Karim",
+  "BR-004": "Norliza binti Hassan", "BR-005": "Amirul Hakim bin Yusof", "BR-006": "Farah Nadia binti Salleh",
+  "BR-007": "Azlan bin Mahmud", "BR-008": "Nurul Izzati binti Hamzah", "BR-009": "Syafiqah binti Osman",
+  "BR-010": "Syarifah Alya binti Ali", "BR-011": "Muhammad Arif bin Zainal", "BR-012": "Aina Sofea binti Rosli",
+  "BR-013": "Roslan bin Abdullah", "BR-014": "Fatin Nabila binti Razak", "BR-015": "Kamarulzaman bin Daud",
+  "BR-016": "Noraini binti Ahmad", "BR-017": "Irfan Hakimi bin Latif", "BR-018": "Maisarah binti Wahid",
+  "BR-019": "Zulkifli bin Samad", "BR-020": "Huda Syahirah binti Musa", "BR-021": "Faizal bin Mokhtar",
+  "BR-022": "Nadia Amirah binti Shukri", "BR-023": "Razak bin Ismail", "BR-024": "Siti Hajar binti Yunus",
+  "BR-025": "Afiqah binti Halim", "BR-026": "Muhammad Danish bin Saad", "BR-027": "Nur Syazana binti Azmi"
+};
+
 async function db(table: string, query = "", options: { method?: string; body?: unknown; prefer?: string } = {}) {
   const result = await fetch(`${supabaseUrl}/rest/v1/${table}${query}`, {
     method: options.method || "GET",
@@ -204,9 +219,23 @@ async function snapshot(ctx: any) {
   const visible = (item: any) => canSee(ctx.member, item.branch_id);
   const visibleCustomers = (payload.customers || []).filter(visible);
   const visiblePledges = (payload.pledges || []).filter(visible);
+  // The demo state keeps one selected customer for the flow, but that
+  // customer may belong to another branch after a role switch. Resolve the
+  // profile from the authenticated scope so the UI never presents the same
+  // person as if they were a customer of every branch.
+  const fixtureCustomer = visibleCustomers.find((item: any) => item.id === demo.customer_fixture) || visibleCustomers[0] || null;
+  const customerProfile = fixtureCustomer ? {
+    id: fixtureCustomer.id,
+    displayName: CUSTOMER_ALIAS_BY_BRANCH[fixtureCustomer.branch_id] || fixtureCustomer.display_name,
+    phoneMasked: fixtureCustomer.phone_masked,
+    identifierMasked: fixtureCustomer.identifier_masked,
+    branchId: fixtureCustomer.branch_id,
+    status: fixtureCustomer.status,
+    riskState: fixtureCustomer.risk_state
+  } : null;
   const valuation = syntheticValuation(payload, ctx.member);
   const yearlyHistory = syntheticYearlyHistory(payload, ctx.member);
-  return { meta: payload.meta, formula, dataPolicy, privacyPolicy, regulatoryRules, nfrPolicies, deploymentPolicy, releaseGates, organization, yearlyHistory, notifications: notificationItems, reportSummary: syntheticReportSummary(payload, demo, ctx.member), cases: caseItems, valuation, financeSummary, documents: documentItems, heirs: heirItems, demo: { role: ctx.member.role, roles: ctx.member.roles, organizationIds: ctx.member.organization_ids, branchIds: ctx.member.branch_ids, pledge: demo.pledge_state, cashBalance: Number(demo.cash_balance), customerFixture: demo.customer_fixture, customerRisk: demo.customer_risk, customerReview: demo.customer_review, customerHistory: demo.customer_history || [], vault: demo.vault_state, vaultAcceptance: demo.vault_acceptance || {}, auction: demo.auction_state, reportPath: demo.report_path, dayEnd: demo.day_end, completion: demo.completion, formulaKey: demo.formula_key, formulaVersion: demo.formula_version, approvalState: demo.approval_state, makerUserId: demo.maker_user_id, approverUserId: demo.approver_user_id, retentionPolicyKey: demo.retention_policy_key, retentionPolicyVersion: demo.retention_policy_version, legalHoldState: demo.legal_hold_state, legalHoldReason: demo.legal_hold_reason, legalHoldUserId: demo.legal_hold_user_id, privacyPolicyKey: demo.privacy_policy_key, privacyPolicyVersion: demo.privacy_policy_version, consentState: demo.consent_state, consentRecordedAt: demo.consent_recorded_at, consentUserId: demo.consent_user_id, privacyRequestType: demo.privacy_request_type, privacyRequestState: demo.privacy_request_state, privacyRequestUserId: demo.privacy_request_user_id }, actor: ctx.member.role, counts: { customers: visibleCustomers.length, pledges: visiblePledges.length, branches: organization.branches.length, notifications: notificationItems.length, cases: caseItems.length, valuation_items: valuation.items.length, ledger_entries: financeSummary.ledger_entries.length, documents: documentItems.length, heirs: heirItems.length }, audit: auditEvents };
+  return { meta: payload.meta, formula, dataPolicy, privacyPolicy, regulatoryRules, nfrPolicies, deploymentPolicy, releaseGates, organization, yearlyHistory, notifications: notificationItems, reportSummary: syntheticReportSummary(payload, demo, ctx.member), cases: caseItems, valuation, financeSummary, documents: documentItems, heirs: heirItems, demo: { role: ctx.member.role, roles: ctx.member.roles, organizationIds: ctx.member.organization_ids, branchIds: ctx.member.branch_ids, pledge: demo.pledge_state, cashBalance: Number(demo.cash_balance), customerFixture: fixtureCustomer?.id || null, customerProfile, customerRisk: fixtureCustomer?.risk_state || demo.customer_risk, customerReview: demo.customer_review, customerHistory: fixtureCustomer ? history(payload, fixtureCustomer.id) : [], vault: demo.vault_state, vaultAcceptance: demo.vault_acceptance || {}, auction: demo.auction_state, reportPath: demo.report_path, dayEnd: demo.day_end, completion: demo.completion, formulaKey: demo.formula_key, formulaVersion: demo.formula_version, approvalState: demo.approval_state, makerUserId: demo.maker_user_id, approverUserId: demo.approver_user_id, retentionPolicyKey: demo.retention_policy_key, retentionPolicyVersion: demo.retention_policy_version, legalHoldState: demo.legal_hold_state, legalHoldReason: demo.legal_hold_reason, legalHoldUserId: demo.legal_hold_user_id, privacyPolicyKey: demo.privacy_policy_key, privacyPolicyVersion: demo.privacy_policy_version, consentState: demo.consent_state, consentRecordedAt: demo.consent_recorded_at, consentUserId: demo.consent_user_id, privacyRequestType: demo.privacy_request_type, privacyRequestState: demo.privacy_request_state, privacyRequestUserId: demo.privacy_request_user_id }, actor: ctx.member.role, counts: { customers: visibleCustomers.length, pledges: visiblePledges.length, branches: organization.branches.length, notifications: notificationItems.length, cases: caseItems.length, valuation_items: valuation.items.length, ledger_entries: financeSummary.ledger_entries.length, documents: documentItems.length, heirs: heirItems.length }, audit: auditEvents };
 }
 
 async function action(request: Request, ctx: any, input: any) {

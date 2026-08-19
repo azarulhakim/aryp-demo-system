@@ -1,3 +1,5 @@
+import { INLINE_ASSETS } from "./static-assets.js";
+
 const JSON_HEADERS = { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" };
 
 function json(body, status = 200, extra = {}) {
@@ -24,6 +26,19 @@ function proxyHeaders(request) {
   return new Headers({ authorization: request.headers.get("authorization") || "", "content-type": "application/json", "x-correlation-id": request.headers.get("x-correlation-id") || `COR-${crypto.randomUUID()}` });
 }
 
+function decodeInlineAsset(value) {
+  const binary = atob(value);
+  const bytes = new Uint8Array(binary.length);
+  for (let index = 0; index < binary.length; index += 1) bytes[index] = binary.charCodeAt(index);
+  return bytes;
+}
+
+function inlineAssetResponse(pathname) {
+  const asset = INLINE_ASSETS[pathname] || (pathname === "/" ? INLINE_ASSETS["/index.html"] : null);
+  if (!asset) return null;
+  return secured(new Response(decodeInlineAsset(asset.body), { headers: { "content-type": asset.contentType, "cache-control": "no-store" } }));
+}
+
 async function handle(request, env) {
   const url = new URL(request.url);
   if (url.pathname === "/config.js") {
@@ -39,6 +54,9 @@ async function handle(request, env) {
     const response = await fetch(target, { method: request.method, headers: proxyHeaders(request), body: request.method === "GET" || request.method === "HEAD" ? undefined : request.body });
     return secured(response);
   }
+  const inlineResponse = inlineAssetResponse(url.pathname);
+  if (inlineResponse) return inlineResponse;
+  if (!env.ASSETS) return secured(new Response("Not found", { status: 404 }));
   return secured(await env.ASSETS.fetch(request));
 }
 
