@@ -1,0 +1,21 @@
+MOCKUP INTERAKTIF AR-RAHNU YAPEIM PREMIER
+Versi simulasi UAT — 15 Ogos 2026
+
+CARA BERKONGSI
+1. Hantar fail Mockup_Interaktif_Ar_Rahnu_YAPEIM_Premier.html kepada penerima, atau kongsikan pakej ZIP ini melalui Google Drive, OneDrive atau saluran dalaman organisasi.
+2. Penerima perlu memuat turun fail terlebih dahulu.
+3. Klik dua kali fail HTML dan buka menggunakan Google Chrome, Microsoft Edge atau Safari versi terkini.
+4. Tiada pemasangan, pelayan atau akaun diperlukan. Aliran utama berfungsi tanpa Internet; sambungan Internet hanya membantu memaparkan ikon antaramuka dengan sempurna.
+
+CARA MENCUBA
+- Gunakan pilihan peranan di bahagian atas untuk melihat konteks Teller, Pengurus Cawangan, Penyelia Francaisi dan Ibu Pejabat.
+- Gunakan menu kiri untuk melihat pelanggan, gadaian, bayaran, vault, lelongan, teller, kelulusan, dokumen, laporan dan pentadbiran.
+- Untuk aliran penuh, pilih “Gadaian baharu” dan lengkapkan langkah 1 hingga 5 mengikut turutan.
+- Cuba ubah berat emas dan jumlah pembiayaan. Sistem akan menolak jumlah yang melebihi pembiayaan maksimum.
+- Sahkan bayaran dan dual control vault sebelum menyelesaikan transaksi.
+- Muat semula halaman untuk mengembalikan semua data simulasi kepada keadaan asal.
+
+NOTA KESELAMATAN
+- Semua nama, nombor dan amaun ialah data demonstrasi bermask.
+- Ini ialah mockup konsep dan bukan sistem produksi atau bukti kawalan operasi.
+- Dokumen ditanda SULIT. Kongsikan hanya dengan penerima yang dibenarkan dan jangan muat naik ke laman awam.

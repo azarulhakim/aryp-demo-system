@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="ms">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>ARYP — Staging</title>
+  <style>
+    :root { color-scheme: light; font-family: Inter, ui-sans-serif, system-ui, sans-serif; background: #f4f1e9; color: #211d16; --ink: #171612; --side: #211d17; --gold: #b98413; --line: #ded6c7; --surface: #fffdf8; --muted: #716957; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; background: #f4f1e9; }
+    #auth-gate { min-height: 100vh; background: #f4f1e9; }
+    .auth-topbar { min-height: 70px; padding: 15px 28px; display: flex; justify-content: space-between; align-items: center; gap: 18px; background: var(--ink); color: #f7f0df; }
+    .auth-brand { display: flex; align-items: baseline; gap: 8px; white-space: nowrap; }
+    .auth-brand strong { font-size: 1.3rem; letter-spacing: -.03em; }
+    .auth-brand span { color: #d8ccb0; font-size: .98rem; }
+    .auth-top-actions { display: flex; align-items: center; gap: 10px; }
+    .auth-top-badge, .auth-role { border-radius: 999px; padding: 7px 12px; font-size: .73rem; font-weight: 800; letter-spacing: .04em; }
+    .auth-top-badge { color: #f0d997; background: #3a2e10; }
+    .auth-role { color: #e8e0ce; border: 1px solid #635743; background: #2c271f; }
+    .auth-layout { display: grid; grid-template-columns: 230px minmax(0, 1fr); min-height: calc(100vh - 70px); }
+    .auth-sidebar { padding: 18px 14px; background: var(--side); color: #f6f0df; }
+    .auth-context { display: grid; gap: 5px; padding: 14px 12px; border: 1px solid #4b4030; border-radius: 12px; margin-bottom: 17px; }
+    .auth-context small { color: #c5b99e; font-size: .76rem; }
+    .auth-context strong { font-size: 1.03rem; }
+    .auth-context span { color: #c5b99e; font-size: .82rem; }
+    .auth-nav { display: grid; gap: 5px; }
+    .auth-nav div { padding: 11px 12px; border-radius: 9px; color: #d8ccb0; font-size: .94rem; }
+    .auth-nav div:first-child { color: #f8e7b4; background: #3a2e10; }
+    .auth-main { position: relative; overflow: hidden; padding: 38px clamp(22px, 5vw, 72px); }
+    .auth-page-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; max-width: 1120px; margin: 0 auto 18px; }
+    .auth-page-head h2 { margin: 0 0 4px; font-size: clamp(1.55rem, 3vw, 2.1rem); letter-spacing: -.03em; }
+    .auth-page-head p { margin: 0; color: var(--muted); line-height: 1.5; }
+    .auth-page-head .status { color: #126c4b; background: #e7f3eb; border-radius: 999px; padding: 7px 12px; font-size: .73rem; font-weight: 800; white-space: nowrap; }
+    .auth-preview-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; max-width: 1120px; margin: 0 auto; opacity: .7; }
+    .preview-metric { min-height: 112px; padding: 16px; border: 1px solid var(--line); border-radius: 14px; background: rgb(255 253 248 / 80%); box-shadow: 0 5px 16px rgb(59 42 20 / 6%); }
+    .preview-metric small { display: block; color: var(--muted); }
+    .preview-metric strong { display: block; margin: 8px 0 3px; font-size: 1.35rem; }
+    .preview-metric span { color: var(--muted); font-size: .83rem; }
+    .auth-card { position: relative; z-index: 1; width: min(490px, 100%); margin: 24px auto 0; padding: 28px 30px 24px; background: var(--surface); border: 1px solid #d7cbb8; border-radius: 16px; box-shadow: 0 22px 55px rgb(57 42 19 / 15%); }
+    .auth-card::before { content: ''; position: absolute; left: 0; top: 0; width: 100%; height: 4px; border-radius: 16px 16px 0 0; background: linear-gradient(90deg, #7d1831, #b98413); }
+    .auth-eyebrow { margin: 0 0 7px; color: #8a6a26; font-size: .73rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+    .auth-card h1 { margin: 0 0 8px; font-size: 1.65rem; letter-spacing: -.03em; }
+    .auth-card p { margin: 0; color: var(--muted); line-height: 1.5; }
+    .auth-card form { margin-top: 18px; }
+    label { display: block; margin-top: 15px; font-size: 13px; font-weight: 700; color: #5d513f; }
+    input { width: 100%; margin-top: 7px; padding: 12px 13px; border: 1px solid #cfc2ae; border-radius: 9px; font: inherit; color: #211d16; background: #fff; outline: none; }
+    input:focus { border-color: #9b741d; box-shadow: 0 0 0 3px rgb(185 132 19 / 16%); }
+    .auth-actions { display: flex; gap: 9px; margin-top: 20px; }
+    button { margin: 0; padding: 12px 16px; border: 0; border-radius: 9px; background: #5e4714; color: #fff8e8; font: inherit; font-weight: 700; cursor: pointer; }
+    button.secondary { background: transparent; color: #5e4714; border: 1px solid #bcae98; }
+    button:disabled { opacity: .55; cursor: wait; }
+    .auth-footnote { display: flex; justify-content: space-between; gap: 10px; margin-top: 18px; padding-top: 14px; border-top: 1px solid #ebe3d6; color: #827765; font-size: .77rem; }
+    .demo-panel { margin-top: 19px; padding-top: 17px; border-top: 1px solid #ebe3d6; }
+    .demo-panel-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+    .demo-panel-head p { margin: 0; }
+    .demo-panel-head p.auth-eyebrow { margin-bottom: 3px; }
+    .demo-panel-head > span { color: #126c4b; background: #e7f3eb; border-radius: 999px; padding: 4px 8px; font-size: .68rem; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; }
+    .demo-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 11px; }
+    .demo-login { display: grid; gap: 3px; margin: 0; padding: 10px 11px; color: #3f321b; background: #faf5e9; border: 1px solid #dfd1b8; border-radius: 9px; text-align: left; }
+    .demo-login:hover { border-color: #9b741d; background: #f7eed9; }
+    .demo-login strong { font-size: .78rem; }
+    .demo-login small { color: #8a6a26; font-size: .65rem; letter-spacing: .04em; }
+    .demo-note { margin-top: 10px !important; color: #827765 !important; font-size: .72rem; }
+    .demo-note code { color: #5e4714; font-weight: 800; }
+    .demo-scope-panel { margin-top: 14px; padding: 13px; border: 1px solid #dfd1b8; border-radius: 10px; background: #fffaf0; }
+    .demo-scope-panel > p { margin: 0; }
+    .demo-scope-grid { display: grid; grid-template-columns: 1fr 1.35fr auto; gap: 8px; align-items: end; margin-top: 10px; }
+    .demo-scope-grid label { margin: 0; font-size: .7rem; color: #6c5d45; }
+    .demo-scope-grid select { width: 100%; margin-top: 5px; padding: 9px 10px; border: 1px solid #cfc2ae; border-radius: 8px; background: #fff; color: #211d16; font: inherit; font-size: .8rem; }
+    .demo-scope-grid button { padding: 10px 12px; white-space: nowrap; }
+    .demo-scope-preview { margin-top: 9px !important; color: #827765 !important; font-size: .72rem; }
+    .demo-scope-preview code { color: #5e4714; font-weight: 700; }
+    #auth-message { min-height: 22px; margin-top: 13px; color: #8f2f2f; font-size: 14px; }
+    #app-shell { min-height: 100vh; display: none; }
+    #app-bar { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 12px 18px; background: #201c16; color: #fff8e8; }
+    #app-bar .app-actions { display: flex; align-items: center; gap: 8px; }
+    #governance { margin: 0; padding: 8px 12px; color: #f8e7b4; background: #3a2e10; border: 1px solid #776950; }
+    #app-bar small { opacity: .82; }
+    #logout { margin: 0; padding: 8px 12px; background: #463b2c; border: 1px solid #776950; }
+    #aryp-ui-frame { display: block; width: 100%; height: calc(100vh - 57px); border: 0; }
+    .staging-badge { display: inline-block; margin-left: 6px; padding: 4px 8px; border-radius: 999px; color: #fff1b4; background: #594615; font-size: 11px; letter-spacing: .08em; vertical-align: middle; }
+    @media (max-width: 860px) { .auth-layout { grid-template-columns: 1fr; } .auth-sidebar { display: none; } .auth-main { padding: 28px 20px 42px; } .auth-preview-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 520px) { .auth-topbar { padding: 14px 18px; } .auth-brand span, .auth-role { display: none; } .auth-main { padding: 24px 14px 32px; } .auth-page-head { flex-direction: column; } .auth-preview-grid { grid-template-columns: 1fr 1fr; gap: 8px; } .preview-metric { min-height: 96px; padding: 12px; } .auth-card { padding: 25px 20px 20px; } .auth-actions { flex-direction: column; } .auth-footnote { flex-direction: column; gap: 4px; } .demo-scope-grid { grid-template-columns: 1fr; } .demo-scope-grid button { width: 100%; } }
+  </style>
+</head>
+<body>
+  <main id="auth-gate">
+    <header class="auth-topbar">
+      <div class="auth-brand"><strong>MyRahnu-f</strong><span>ARYP Demo System</span></div>
+      <div class="auth-top-actions"><span class="auth-top-badge">SULIT · SIMULATION</span><span class="auth-role">OPERATOR LOGIN</span></div>
+    </header>
+    <section class="auth-layout">
+      <aside class="auth-sidebar" aria-label="Navigasi pratonton">
+        <div class="auth-context"><small>Dataset</small><strong>ARYP-DEMO-SEED-001</strong><span>Sintetik sahaja</span></div>
+        <nav class="auth-nav"><div>Ringkasan</div><div>Pelanggan</div><div>Gadaian baharu</div><div>Tebusan</div><div>Vault</div><div>Lelongan</div><div>Audit</div></nav>
+      </aside>
+      <div class="auth-main">
+        <div class="auth-page-head"><div><h2>Ringkasan operasi</h2><p>Log masuk untuk meneruskan ke ruang kerja ARYP.</p></div><span class="status">SYNTHETIC_ONLY</span></div>
+        <div class="auth-preview-grid" aria-hidden="true"><div class="preview-metric"><small>Pelanggan</small><strong>5</strong><span>Fixture sintetik</span></div><div class="preview-metric"><small>Pledge</small><strong>4</strong><span>Provisional</span></div><div class="preview-metric"><small>Tunai simulasi</small><strong>RM 37,580</strong><span>Tiada wang sebenar</span></div><div class="preview-metric"><small>Dataset</small><strong>v0.1</strong><span>Synthetic only</span></div></div>
+        <section class="auth-card" aria-labelledby="title">
+          <p class="auth-eyebrow">Akses operator</p>
+          <h1 id="title">Selamat datang ke MyRahnu-f <span class="staging-badge">STAGING</span></h1>
+          <p>Log masuk untuk mengakses dashboard ARYP. Data sintetik dan semua transaksi kekal simulasi.</p>
+          <form id="auth-form">
+            <label for="email">E-mel staging</label>
+            <input id="email" type="email" autocomplete="username" required>
+            <label for="password">Kata laluan</label>
+            <input id="password" type="password" autocomplete="current-password" minlength="8" required>
+            <div class="auth-actions"><button id="login" type="submit">Log masuk</button><button id="signup" class="secondary" type="button">Daftar akaun</button></div>
+          </form>
+          <div id="auth-message" role="status" aria-live="polite"></div>
+          <div class="auth-footnote"><span>Secure operator access</span><span>ARYP-DEMO-SEED-001 · v0.1</span></div>
+          <section class="demo-panel" aria-labelledby="demo-title">
+            <div class="demo-panel-head"><div><p class="auth-eyebrow">Akaun demo</p><p id="demo-title">Masuk pantas untuk testing role</p></div><span>synthetic</span></div>
+            <div class="demo-grid">
+              <button class="demo-login" type="button" data-demo-email="demo.manager@aryp-demo.my"><strong>Pengurus cawangan</strong><small>BRANCH_MANAGER</small></button>
+              <button class="demo-login" type="button" data-demo-email="demo.teller@aryp-demo.my"><strong>Teller</strong><small>TELLER</small></button>
+              <button class="demo-login" type="button" data-demo-email="demo.vault@aryp-demo.my"><strong>Custodian vault</strong><small>VAULT_CUSTODIAN</small></button>
+              <button class="demo-login" type="button" data-demo-email="demo.franchisor@aryp-demo.my"><strong>Master francaisor</strong><small>FRANCHISOR_SUPERVISOR · NETWORK</small></button>
+              <button class="demo-login" type="button" data-demo-email="demo.executive@aryp-demo.my"><strong>Eksekutif</strong><small>EXECUTIVE</small></button>
+              <button class="demo-login" type="button" data-demo-email="demo.auditor@aryp-demo.my"><strong>Auditor</strong><small>AUDITOR</small></button>
+            </div>
+            <p class="demo-note">Kata laluan demo semua akaun: <code>ARYP-Demo-2026!</code></p>
+            <div class="demo-scope-panel" aria-label="Akaun demo mengikut skop">
+              <p class="auth-eyebrow">Akaun ikut cawangan / franchisee</p>
+              <p class="demo-note" style="margin-top:4px !important">Pilih role dan skop untuk menguji data yang benar-benar terhad kepada cawangan atau franchisee tersebut.</p>
+              <div class="demo-scope-grid">
+                <label>Role
+                  <select id="demo-scope-role">
+                    <option value="manager">Pengurus cawangan</option>
+                    <option value="teller">Teller</option>
+                    <option value="vault">Custodian vault</option>
+                    <option value="franchisee">Pentadbir franchisee</option>
+                  </select>
+                </label>
+                <label>Skop
+                  <select id="demo-scope-target" aria-label="Pilih cawangan atau franchisee"></select>
+                </label>
+                <button id="demo-scope-login" type="button">Log masuk</button>
+              </div>
+              <p id="demo-scope-preview" class="demo-scope-preview"></p>
+            </div>
+          </section>
+        </section>
+      </div>
+    </section>
+  </main>
+  <section id="app-shell">
+    <header id="app-bar"><div><strong>ARYP</strong><small id="session-role"> · authenticated staging</small></div><div class="app-actions"><button id="governance" type="button">Polisi &amp; gates</button><button id="logout" type="button">Log keluar</button></div></header>
+      <iframe id="aryp-ui-frame" sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation" referrerpolicy="no-referrer" title="Mockup ARYP staging" src="/mockup.html"></iframe>
+  </section>
+  <script src="/config.js"></script>
+  <script>
+    (() => {
+      const cfg = globalThis.__ARYP_CONFIG__ || {};
+      const gate = document.querySelector('#auth-gate');
+      const shell = document.querySelector('#app-shell');
+      const form = document.querySelector('#auth-form');
+      const email = document.querySelector('#email');
+      const password = document.querySelector('#password');
+      const message = document.querySelector('#auth-message');
+      const frame = document.querySelector('#aryp-ui-frame');
+      const tokenKey = 'aryp_staging_access_token';
+      let accessToken = localStorage.getItem(tokenKey) || '';
+      const say = (value, bad = true) => { message.textContent = value; message.style.color = bad ? '#8f2f2f' : '#22643b'; };
+      const authRequest = async (path, body) => {
+        const response = await fetch(`${cfg.supabaseUrl}/auth/v1/${path}`, { method: 'POST', headers: { apikey: cfg.supabasePublishableKey, 'content-type': 'application/json' }, body: JSON.stringify(body) });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.error_description || data.msg || data.message || 'auth_failed');
+        return data;
+      };
+      const api = async (path, options = {}) => {
+        const headers = { ...(options.headers || {}), authorization: `Bearer ${accessToken}` };
+        const response = await fetch(path, { ...options, headers });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) { if (response.status === 401) signOut(); throw new Error(data.error || 'request_failed'); }
+        return data;
+      };
+      const showApp = async () => {
+        try {
+          const sessionSnapshot = await api('/api/session');
+          const roleBadge = document.querySelector('#session-role');
+          if (roleBadge) roleBadge.textContent = ` · ${sessionSnapshot.actor || 'authenticated staging'}`;
+          // Reload the embedded mockup after every successful login. The iframe
+          // may have loaded while the previous user was logged out; reloading
+          // guarantees its first session snapshot uses the new access token.
+          const deliverSnapshot = () => frame.contentWindow?.postMessage({ type: 'aryp-session-snapshot', data: sessionSnapshot }, '*');
+          frame.addEventListener('load', deliverSnapshot, { once: true });
+          frame.src = `/mockup.html?session=${Date.now()}&role=${encodeURIComponent(sessionSnapshot.actor || '')}`;
+          let deliveryAttempts = 0;
+          const snapshotTimer = setInterval(() => {
+            deliverSnapshot();
+            deliveryAttempts += 1;
+            if (deliveryAttempts >= 12) clearInterval(snapshotTimer);
+          }, 250);
+          gate.style.display = 'none';
+          shell.style.display = 'block';
+        } catch { accessToken = ''; localStorage.removeItem(tokenKey); gate.style.display = 'block'; shell.style.display = 'none'; }
+      };
+      const signOut = () => { accessToken = ''; localStorage.removeItem(tokenKey); shell.style.display = 'none'; gate.style.display = 'block'; say('Sesi telah dilog keluar.', false); };
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const button = document.querySelector('#login'); button.disabled = true; say('Mengesahkan…', false);
+        try { const data = await authRequest('token?grant_type=password', { email: email.value.trim(), password: password.value }); accessToken = data.access_token || ''; if (!accessToken) throw new Error('token_missing'); localStorage.setItem(tokenKey, accessToken); await showApp(); } catch (error) { say(`Log masuk gagal: ${error.message}`); } finally { button.disabled = false; }
+      });
+      document.querySelector('#signup').addEventListener('click', async () => {
+        if (!email.value.trim() || !password.value) return say('Isi e-mel dan kata laluan dahulu.');
+        try { await authRequest('signup', { email: email.value.trim(), password: password.value, options: { email_redirect_to: `${window.location.origin}/` } }); say(`Akaun didaftarkan. Pautan pengesahan akan kembali ke ${window.location.origin}. Sahkan e-mel, kemudian log masuk.`, false); } catch (error) { say(`Pendaftaran gagal: ${error.message}`); }
+      });
+      const scopeRole = document.querySelector('#demo-scope-role');
+      const scopeTarget = document.querySelector('#demo-scope-target');
+      const scopePreview = document.querySelector('#demo-scope-preview');
+      const branchDemoFixtures = [
+        ['BR-001', 'FR-001 · Cawangan Demo Utara 1'], ['BR-002', 'FR-001 · Cawangan Demo Utara 2'], ['BR-003', 'FR-002 · Cawangan Demo Selatan 1'],
+        ['BR-004', 'FR-002 · Cawangan Demo Selatan 2'], ['BR-005', 'FR-003 · Cawangan Demo Timur 1'], ['BR-006', 'FR-003 · Cawangan Demo Timur 2'],
+        ['BR-007', 'FR-001 · Cawangan Demo Utara 3'], ['BR-008', 'FR-002 · Cawangan Demo Selatan 3'], ['BR-009', 'FR-003 · Cawangan Demo Timur 3'],
+        ['BR-010', 'FR-004 · Cawangan Demo Barat 1'], ['BR-011', 'FR-004 · Cawangan Demo Barat 2'], ['BR-012', 'FR-004 · Cawangan Demo Barat 3'],
+        ['BR-013', 'FR-005 · Cawangan Demo Pantai Timur 1'], ['BR-014', 'FR-005 · Cawangan Demo Pantai Timur 2'], ['BR-015', 'FR-005 · Cawangan Demo Pantai Timur 3'],
+        ['BR-016', 'FR-006 · Cawangan Demo Borneo 1'], ['BR-017', 'FR-006 · Cawangan Demo Borneo 2'], ['BR-018', 'FR-006 · Cawangan Demo Borneo 3'],
+        ['BR-019', 'FR-007 · Cawangan Demo Lembah Klang 1'], ['BR-020', 'FR-007 · Cawangan Demo Lembah Klang 2'], ['BR-021', 'FR-007 · Cawangan Demo Lembah Klang 3'],
+        ['BR-022', 'FR-008 · Cawangan Demo Utara Timur 1'], ['BR-023', 'FR-008 · Cawangan Demo Utara Timur 2'], ['BR-024', 'FR-008 · Cawangan Demo Utara Timur 3'],
+        ['BR-025', 'FR-009 · Cawangan Demo Selatan Barat 1'], ['BR-026', 'FR-009 · Cawangan Demo Selatan Barat 2'], ['BR-027', 'FR-009 · Cawangan Demo Selatan Barat 3']
+      ];
+      const franchiseeDemoFixtures = Array.from({ length: 9 }, (_, index) => {
+        const id = `FR-${String(index + 1).padStart(3, '0')}`;
+        return [id, `${id} · Franchisee Demo`];
+      });
+      const updateScopeOptions = () => {
+        if (!scopeRole || !scopeTarget) return;
+        const isFranchisee = scopeRole.value === 'franchisee';
+        const options = isFranchisee ? franchiseeDemoFixtures : branchDemoFixtures;
+        scopeTarget.innerHTML = options.map(([value, label]) => `<option value="${value}">${label}</option>`).join('');
+        const target = scopeTarget.value.toLowerCase().replaceAll('-', '');
+        const emailAddress = isFranchisee ? `demo.franchisee.${target}@aryp-demo.my` : `demo.${scopeRole.value}.${target}@aryp-demo.my`;
+        if (scopePreview) scopePreview.innerHTML = `Akaun: <code>${emailAddress}</code> · Kata laluan sama seperti akaun demo.`;
+      };
+      scopeRole?.addEventListener('change', updateScopeOptions);
+      scopeTarget?.addEventListener('change', updateScopeOptions);
+      document.querySelector('#demo-scope-login')?.addEventListener('click', () => {
+        const target = scopeTarget?.value || '';
+        const role = scopeRole?.value || 'manager';
+        const suffix = target.toLowerCase().replaceAll('-', '');
+        email.value = role === 'franchisee' ? `demo.franchisee.${suffix}@aryp-demo.my` : `demo.${role}.${suffix}@aryp-demo.my`;
+        password.value = 'ARYP-Demo-2026!';
+        form.requestSubmit();
+      });
+      updateScopeOptions();
+      document.querySelectorAll('.demo-login').forEach((button) => button.addEventListener('click', () => {
+        email.value = button.dataset.demoEmail || '';
+        password.value = 'ARYP-Demo-2026!';
+        form.requestSubmit();
+      }));
+      document.querySelector('#logout').addEventListener('click', signOut);
+      document.querySelector('#governance').addEventListener('click', () => window.open('/governance.html', '_blank', 'noopener,noreferrer'));
+      window.addEventListener('message', async (event) => {
+        const messageData = event.data;
+        // Accept requests from the mockup shell or its nested srcdoc frame.
+        // Both are controlled children of this authenticated page.
+        if (!messageData || messageData.type !== 'aryp-api-request') return;
+        if (typeof messageData.requestId !== 'string' || !/^[A-Za-z0-9._:-]{1,120}$/.test(messageData.requestId)) return;
+        const responseTarget = event.source;
+        if (!responseTarget || typeof responseTarget.postMessage !== 'function') return;
+        try {
+          const read = messageData.action === 'get_session' || messageData.action === 'get_audit';
+          const response = await api(read ? (messageData.action === 'get_audit' ? '/api/audit' : '/api/session') : '/api/actions', { method: read ? 'GET' : 'POST', headers: { 'content-type': 'application/json', 'x-correlation-id': messageData.requestId }, body: read ? undefined : JSON.stringify({ action: messageData.action, ...(messageData.payload || {}) }) });
+          responseTarget.postMessage({ type: 'aryp-api-response', requestId: messageData.requestId, ok: true, data: response }, '*');
+        } catch (error) { responseTarget.postMessage({ type: 'aryp-api-response', requestId: messageData.requestId, ok: false, error: error.message }, '*'); }
+      });
+      showApp();
+    })();
+  </script>
+</body>
+</html>

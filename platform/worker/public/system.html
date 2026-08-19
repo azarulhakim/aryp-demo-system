@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="ms">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ARYP Demo System</title><link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="topbar"><div><strong>MyRahnu-f</strong><small> ARYP Demo System</small></div><div class="top-actions"><span class="badge">SULIT · SIMULATION</span><select id="role"><option value="EXECUTIVE">Eksekutif</option><option value="BRANCH_MANAGER">Pengurus Cawangan</option><option value="TELLER">Teller</option><option value="VAULT_CUSTODIAN">Custodian Vault</option><option value="FRANCHISOR_SUPERVISOR">Penyelia Francaisor</option><option value="AUDITOR">Auditor</option></select><button id="reset">Reset demo</button></div></header>
+  <div id="notice" class="notice" hidden></div>
+  <main class="layout"><aside><div class="context"><small>Dataset</small><strong>ARYP-DEMO-SEED-001</strong><span>Sintetik sahaja</span></div><nav id="nav"><button data-screen="dashboard" class="active">Ringkasan</button><button data-screen="customers">Pelanggan</button><button data-screen="pledge">Gadaian baharu</button><button data-screen="payments">Tebusan</button><button data-screen="vault">Vault</button><button data-screen="auction">Lelongan</button><button data-screen="audit">Audit</button></nav></aside>
+    <section class="content"><section data-page="dashboard"><div class="page-head"><div><h1>Ringkasan operasi</h1><p>Data sintetik dan polisi provisional untuk demonstrasi.</p></div><span id="actor" class="status">EXECUTIVE</span></div><div id="metrics" class="metrics"></div><div class="grid"><article class="card"><h2>Status demo</h2><p id="pledge-state"></p><p id="vault-state"></p><p id="auction-state"></p></article><article class="card"><h2>Audit terkini</h2><div id="audit-preview"></div></article></div></section>
+      <section data-page="customers" hidden><div class="page-head"><div><h1>Pelanggan & risk hold</h1><p>Pilih fixture CUS-003 atau CUS-005 untuk mencuba kawalan.</p></div></div><div id="customers" class="cards"></div></section>
+      <section data-page="pledge" hidden><div class="page-head"><div><h1>Gadaian baharu</h1><p>Aliran maker-checker → cash-out → vault check-in.</p></div></div><article class="card flow"><div class="step"><b>1</b><span>PLG-001 · Pelanggan Demo A · MAR-001</span></div><div class="step"><b>2</b><span>NM RM3,907.44 · Margin provisional 70%</span></div><div class="step"><b>3</b><button data-action="approve_pledge">Approve sebagai manager</button></div><div class="step"><b>4</b><button data-action="cash_out">Cash-out simulasi RM2,730</button></div><div class="step"><b>5</b><button data-action="vault_checkin">Dual-control vault check-in</button></div><p id="pledge-feedback"></p></article></section>
+      <section data-page="payments" hidden><div class="page-head"><div><h1>Tebusan & bayaran</h1><p>Provider mock dan idempotency.</p></div></div><article class="card"><h2>PLG-002 · Tebusan simulasi</h2><p>Jumlah fixture RM1,578.50 · MOCK_PAYMENT</p><button data-action="redemption">Post redemption simulasi</button><p id="payment-feedback"></p></article></section>
+      <section data-page="vault" hidden><div class="page-head"><div><h1>Vault & stocktake</h1><p>Pergerakan fizikal dengan actor, lokasi dan sebab.</p></div></div><article class="card"><button data-action="stocktake">Jalankan stocktake (4/4)</button><button data-action="vault_no_dual">Cuba check-out tanpa dual control</button><p id="vault-feedback"></p></article></section>
+      <section data-page="auction" hidden><div class="page-head"><div><h1>Overdue & lelongan</h1><p>Timer dan settlement kekal simulasi.</p></div></div><article class="card"><button data-action="auction_overdue">Majukan PLG-003 ke overdue</button><button data-action="auction_surplus">AUC-001 surplus RM350</button><button data-action="auction_shortfall">AUC-002 shortfall RM250</button><p id="auction-feedback"></p></article></section>
+      <section data-page="audit" hidden><div class="page-head"><div><h1>Audit & drill-down</h1><p>Tenant boundary, event trail dan skop laporan.</p></div></div><article class="card"><button data-action="tenant_probe">Cuba akses BR-999</button><button data-action="drilldown">Drill-down FR-001 → BR-001 → PLG-001</button><p id="audit-feedback"></p></article><article class="card"><div id="audit-list"></div></article></section>
+    </section>
+  </main>
+  <script src="/app.js"></script>
+</body>
+</html>

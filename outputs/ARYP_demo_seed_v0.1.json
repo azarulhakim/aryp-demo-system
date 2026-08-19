@@ -1,0 +1,77 @@
+{
+  "meta": {
+    "dataset_id": "ARYP-DEMO-SEED-001",
+    "version": "0.1",
+    "status": "SYNTHETIC_ONLY",
+    "classification": "DEMO—NOT PRODUCTION",
+    "currency": "MYR-SIMULATION",
+    "generated_for": "Assumption-Based Development Baseline AB-0.1"
+  },
+  "operators": [
+    {"id": "OP-YSV", "name": "YSV Demo Operator", "type": "ASSUMED_OPERATOR", "status": "DEMO"}
+  ],
+  "franchisees": [
+    {"id": "FR-001", "operator_id": "OP-YSV", "name": "Franchisee Demo Utara", "status": "ACTIVE"},
+    {"id": "FR-002", "operator_id": "OP-YSV", "name": "Franchisee Demo Selatan", "status": "ACTIVE"},
+    {"id": "FR-003", "operator_id": "OP-YSV", "name": "Franchisee Demo Timur", "status": "ACTIVE"}
+  ],
+  "branches": [
+    {"id": "BR-001", "franchisee_id": "FR-001", "code": "DEMO-UTR-01", "name": "Cawangan Demo Utara 1", "business_date": "2026-08-16", "offline_mode": "DISABLED"},
+    {"id": "BR-002", "franchisee_id": "FR-001", "code": "DEMO-UTR-02", "name": "Cawangan Demo Utara 2", "business_date": "2026-08-16", "offline_mode": "DISABLED"},
+    {"id": "BR-003", "franchisee_id": "FR-002", "code": "DEMO-SLT-01", "name": "Cawangan Demo Selatan 1", "business_date": "2026-08-16", "offline_mode": "DISABLED"},
+    {"id": "BR-004", "franchisee_id": "FR-002", "code": "DEMO-SLT-02", "name": "Cawangan Demo Selatan 2", "business_date": "2026-08-16", "offline_mode": "DISABLED"},
+    {"id": "BR-005", "franchisee_id": "FR-003", "code": "DEMO-TMR-01", "name": "Cawangan Demo Timur 1", "business_date": "2026-08-16", "offline_mode": "DISABLED"},
+    {"id": "BR-006", "franchisee_id": "FR-003", "code": "DEMO-TMR-02", "name": "Cawangan Demo Timur 2", "business_date": "2026-08-16", "offline_mode": "DISABLED"}
+  ],
+  "users": [
+    {"id": "USR-001", "role": "FRANCHISOR_SUPERVISOR", "branch_ids": ["BR-001", "BR-002", "BR-003", "BR-004", "BR-005", "BR-006"], "self_approval": false},
+    {"id": "USR-002", "role": "BRANCH_MANAGER", "branch_ids": ["BR-001"], "self_approval": false},
+    {"id": "USR-003", "role": "EXECUTIVE", "branch_ids": ["BR-001"], "self_approval": false},
+    {"id": "USR-004", "role": "TELLER", "branch_ids": ["BR-001"], "self_approval": false},
+    {"id": "USR-005", "role": "VAULT_CUSTODIAN", "branch_ids": ["BR-001"], "self_approval": false},
+    {"id": "USR-006", "role": "AUDITOR", "branch_ids": ["BR-001", "BR-002", "BR-003", "BR-004", "BR-005", "BR-006"], "self_approval": false}
+  ],
+  "customers": [
+    {"id": "CUS-001", "display_name": "Pelanggan Demo A", "identifier_masked": "SYN-0001", "phone_masked": "+60-1X-XXXX001", "status": "VERIFIED", "risk_state": "CLEAR", "branch_id": "BR-001"},
+    {"id": "CUS-002", "display_name": "Pelanggan Demo B", "identifier_masked": "SYN-0002", "phone_masked": "+60-1X-XXXX002", "status": "VERIFIED", "risk_state": "CLEAR", "branch_id": "BR-001"},
+    {"id": "CUS-003", "display_name": "Pelanggan Repeat Demo", "identifier_masked": "SYN-0003", "phone_masked": "+60-1X-XXXX003", "status": "VERIFIED", "risk_state": "REPEAT_REVIEW", "branch_id": "BR-001"},
+    {"id": "CUS-004", "display_name": "Pelanggan Heir Demo", "identifier_masked": "SYN-0004", "phone_masked": "+60-1X-XXXX004", "status": "VERIFIED", "risk_state": "HEIR_REVIEW", "branch_id": "BR-002"},
+    {"id": "CUS-005", "display_name": "Pelanggan Blocked Demo", "identifier_masked": "SYN-0005", "phone_masked": "+60-1X-XXXX005", "status": "ON_HOLD", "risk_state": "BLACKLIST_REVIEW", "branch_id": "BR-003"}
+  ],
+  "heirs": [
+    {"id": "HEIR-001", "customer_id": "CUS-004", "display_name": "Waris Demo", "relationship": "SIBLING", "claim_state": "PENDING_DOCUMENT_REVIEW"}
+  ],
+  "gold_prices": [
+    {"id": "GOLD-001", "purity": "916", "price_per_gram": 603.0, "effective_at": "2026-08-16T09:00:00+08:00", "source": "FIXTURE", "state": "PROVISIONAL"},
+    {"id": "GOLD-002", "purity": "999", "price_per_gram": 655.0, "effective_at": "2026-08-16T09:00:00+08:00", "source": "FIXTURE", "state": "PROVISIONAL"}
+  ],
+  "marhun_items": [
+    {"id": "MAR-001", "customer_id": "CUS-001", "branch_id": "BR-001", "description": "Rantai tangan demo", "purity": "916", "weight_grams": 6.48, "valuation_state": "PROVISIONAL", "simulated_nm": 3907.44},
+    {"id": "MAR-002", "customer_id": "CUS-002", "branch_id": "BR-001", "description": "Cincin demo", "purity": "999", "weight_grams": 3.2, "valuation_state": "PROVISIONAL", "simulated_nm": 2096.0},
+    {"id": "MAR-003", "customer_id": "CUS-003", "branch_id": "BR-001", "description": "Gelang demo", "purity": "916", "weight_grams": 10.0, "valuation_state": "PROVISIONAL", "simulated_nm": 6030.0},
+    {"id": "MAR-004", "customer_id": "CUS-004", "branch_id": "BR-002", "description": "Loket barang demo", "purity": "916", "weight_grams": 8.0, "valuation_state": "PROVISIONAL", "simulated_nm": 4824.0}
+  ],
+  "pledges": [
+    {"id": "PLG-001", "customer_id": "CUS-001", "marhun_id": "MAR-001", "branch_id": "BR-001", "state": "PLEDGED_ACTIVE", "simulated_financing": 2730.0, "formula_version": "ASSUMED-CALC-0.1", "approval_state": "APPROVED_FOR_DEMO_ONLY"},
+    {"id": "PLG-002", "customer_id": "CUS-002", "marhun_id": "MAR-002", "branch_id": "BR-001", "state": "REDEMPTION_SIMULATED", "simulated_financing": 1467.2, "formula_version": "ASSUMED-CALC-0.1", "approval_state": "APPROVED_FOR_DEMO_ONLY"},
+    {"id": "PLG-003", "customer_id": "CUS-003", "marhun_id": "MAR-003", "branch_id": "BR-001", "state": "OVERDUE", "simulated_financing": 4221.0, "formula_version": "ASSUMED-CALC-0.1", "approval_state": "APPROVED_FOR_DEMO_ONLY"},
+    {"id": "PLG-004", "customer_id": "CUS-004", "marhun_id": "MAR-004", "branch_id": "BR-002", "state": "AUCTION_READY", "simulated_financing": 3376.8, "formula_version": "ASSUMED-CALC-0.1", "approval_state": "APPROVED_FOR_DEMO_ONLY"}
+  ],
+  "payments": [
+    {"id": "PAY-001", "pledge_id": "PLG-001", "kind": "SIMULATED_CASH_OUT", "amount": 2730.0, "state": "SIMULATION", "provider": "MOCK_TELLER"},
+    {"id": "PAY-002", "pledge_id": "PLG-002", "kind": "SIMULATED_REDEMPTION", "amount": 1578.5, "state": "SIMULATION", "provider": "MOCK_PAYMENT"},
+    {"id": "PAY-003", "pledge_id": "PLG-003", "kind": "SIMULATED_INSTALLMENT", "amount": 250.0, "state": "SIMULATION", "provider": "MOCK_PAYMENT"}
+  ],
+  "vault_movements": [
+    {"id": "VLT-001", "pledge_id": "PLG-001", "branch_id": "BR-001", "event": "CHECK_IN", "location": "VAULT-A-01", "actor": "USR-005", "reason": "PLEDGE_ACCEPTED", "state": "SIMULATION"},
+    {"id": "VLT-002", "pledge_id": "PLG-002", "branch_id": "BR-001", "event": "CHECK_OUT_SIMULATED", "location": "VAULT-A-01", "actor": "USR-005", "reason": "REDEMPTION_DEMO", "state": "SIMULATION"}
+  ],
+  "auctions": [
+    {"id": "AUC-001", "pledge_id": "PLG-004", "branch_id": "BR-002", "state": "AUCTION_SIMULATED", "simulated_base_price": 3800.0, "simulated_sale_price": 4200.0, "simulated_surplus": 350.0},
+    {"id": "AUC-002", "pledge_id": "PLG-003", "branch_id": "BR-001", "state": "SHORTFALL_REVIEW_SIMULATED", "simulated_base_price": 4800.0, "simulated_sale_price": 3900.0, "simulated_shortfall": 250.0}
+  ],
+  "notifications": [
+    {"id": "NOT-001", "customer_id": "CUS-001", "pledge_id": "PLG-001", "kind": "REMINDER_SIMULATED", "channel": "SMS_MOCK", "delivery_state": "SENT_SIMULATED"},
+    {"id": "NOT-002", "customer_id": "CUS-003", "pledge_id": "PLG-003", "kind": "AUCTION_REMINDER_SIMULATED", "channel": "EMAIL_MOCK", "delivery_state": "RETRY_SIMULATED"}
+  ]
+}

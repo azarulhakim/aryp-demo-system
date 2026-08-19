@@ -1,0 +1,14 @@
+{
+  "name": "aryp-staging-worker",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "node --check src/index.js && npx wrangler@4.123.0 deploy --env staging --dry-run --outdir .wrangler/dry-run",
+    "dev": "npx wrangler@4.123.0 dev --env staging",
+    "deploy:staging": "npx wrangler@4.123.0 deploy --env staging --minify",
+    "deploy:production": "npx wrangler@4.123.0 deploy --env production --minify"
+  },
+  "devDependencies": {
+    "wrangler": "4.123.0"
+  }
+}
